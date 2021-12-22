@@ -180,36 +180,32 @@ public class Sudonku {
      * @return Whether the experimental value lead to a valid solution
      */
     private boolean recursiveSolve(int y, int x) {
-        while (x < GRID_SIZE || y < GRID_SIZE) {                        //While within the board
-            if (x >= GRID_SIZE && y <= GRID_SIZE) {                     //If the line is filled, continue at the beginning of the next line
+        while (y < GRID_SIZE || x < GRID_SIZE) {    //Iterate through the board until a non-zero value is found
+            if(y==GRID_SIZE)return true;            //If grid is complete, return true to end iteration
+            if (x >= GRID_SIZE && y <= GRID_SIZE) { //Continue on the next line if necessary
                 x = 0;
                 y++;
             }
-            while (y < GRID_SIZE && x < GRID_SIZE && board[y][x] != 0) {  //Iterate through the board until a non-zero value is found
-                x++;
-
-                //Row done
-                if (x >= GRID_SIZE && y <= GRID_SIZE) {                 //Continue on the next line if necessary
-                    x = 0;
-                    y++;
+            else{
+                if(board[y][x] != 0){               //Continue iterating until we find a non-zero value to start from
+                    x++;
                 }
-
-            }
-
-            if (y > 8) return true;                 //If done with the last row, the board is completed successfully
-            for (int test = 1; test <= GRID_SIZE; test++) { //Test numbers 1-9 to find a valid solution
-                if (isValid(y, x, test)) {
-                    board[y][x] = test;           //If value is valid, assign said value to coordinates
-                    if (recursiveSolve(y, x + 1))
-                        return true;   //Based on this assumption, solve next grid with 0 value
-
-                    board[y][x] = 0;              //If unsuccessful, reset grid to 0
+                else{
+                    break;
                 }
             }
-            return false;
         }
 
-        return true;
+        for (int test = 1; test <= GRID_SIZE; test++) { //Test numbers 1-9 to find a valid solution
+            if (isValid(y, x, test)) {
+                board[y][x] = test;           //If value is valid, assign said value to coordinates
+                if (recursiveSolve(y, x + 1))
+                    return true;   //Based on this assumption, solve next grid with 0 value
+
+                board[y][x] = 0;              //If unsuccessful, reset grid to 0
+            }
+        }
+        return false;
     }
 
     /**
